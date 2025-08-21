@@ -1,0 +1,819 @@
+/* Modern Green Theme - besturf */
+
+:root {
+    --primary-green: #2ecc71;
+    --dark-green: #27ae60;
+    --light-green: #a8e6cf;
+    --accent-green: #00b894;
+    --bg-light: #f8fffe;
+    --bg-dark: #2d3436;
+    --text-dark: #2d3436;
+    --text-light: #636e72;
+    --white: #ffffff;
+    --shadow: 0 10px 30px rgba(46, 204, 113, 0.1);
+    --shadow-hover: 0 15px 40px rgba(46, 204, 113, 0.2);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* Reset and Base Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background: linear-gradient(135deg, #f8fffe 0%, #e8f5e8 100%);
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+
+/* Smooth scrolling */
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+/* Navigation - Modern Glass Effect */
+
+.navbar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow);
+    padding: 1rem 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    transition: var(--transition);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.nav-logo h2 {
+    color: var(--primary-green);
+    font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: -0.5px;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background: var(--primary-green);
+    transition: var(--transition);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.btn-login,
+.btn-register {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.btn-login {
+    background: transparent;
+    color: var(--primary-green);
+    border: 2px solid var(--primary-green);
+}
+
+.btn-register {
+    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+.btn-login:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-register:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: var(--primary-green);
+    border-radius: 2px;
+    transition: var(--transition);
+}
+
+
+/* Hero Section - Modern Gradient */
+
+.hero {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.9) 0%, rgba(39, 174, 96, 0.9) 100%), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="1200" height="600" fill="url(%23grid)"/></svg>');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    margin-top: 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+    animation: fadeInUp 1s ease-out;
+}
+
+.hero-content p {
+    font-size: 1.3rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+    animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-container {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    box-shadow: var(--shadow);
+    border-radius: 50px;
+    overflow: hidden;
+    animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+.search-container input {
+    flex: 1;
+    padding: 1.2rem 2rem;
+    border: none;
+    font-size: 1.1rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.search-container input::placeholder {
+    color: var(--text-light);
+}
+
+.search-container button {
+    padding: 1.2rem 2rem;
+    background: var(--white);
+    color: var(--primary-green);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.search-container button:hover {
+    background: var(--light-green);
+}
+
+.btn-primary {
+    padding: 1.2rem 2.5rem;
+    background: linear-gradient(135deg, var(--white), #f8fffe);
+    color: var(--primary-green);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+}
+
+
+/* Turf Section - Modern Cards */
+
+.turf-section {
+    padding: 5rem 0;
+    background: var(--bg-light);
+}
+
+.turf-section h2 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    position: relative;
+}
+
+.turf-section h2::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-green), var(--accent-green));
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.filter-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.filter-container select,
+.filter-container button {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid var(--light-green);
+    border-radius: 50px;
+    background: white;
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.filter-container select:focus,
+.filter-container button:hover {
+    border-color: var(--primary-green);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+.turf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2.5rem;
+}
+
+.turf-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+}
+
+.turf-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-green), var(--accent-green));
+}
+
+.turf-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+}
+
+.turf-image {
+    height: 220px;
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.turf-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.turf-info {
+    padding: 2rem;
+}
+
+.turf-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: var(--text-dark);
+}
+
+.turf-location,
+.turfsport,
+.turf-price {
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.turf-amenities {
+    margin: 1rem 0;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.book-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: var(--transition);
+    margin-top: 1rem;
+}
+
+.book-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+
+/* Map Section */
+
+.map-section {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, #f8fffe 0%, #e8f5e8 100%);
+}
+
+.map-section h2 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    position: relative;
+}
+
+.map-section h2::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-green), var(--accent-green));
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+#map {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    height: 400px;
+    overflow: hidden;
+}
+
+
+/* Modal Styles - Modern Design */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close {
+    position: absolute;
+    right: 1.5rem;
+    top: 1.5rem;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: var(--transition);
+}
+
+.close:hover {
+    color: var(--primary-green);
+    transform: rotate(90deg);
+}
+
+.modal-content h2 {
+    margin-bottom: 2rem;
+    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.modal-content input,
+.modal-content select {
+    padding: 1rem;
+    border: 2px solid var(--light-green);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+}
+
+.modal-content button {
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.modal-content button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+
+/* Booking Modal Styles */
+
+.booking-modal {
+    max-width: 600px;
+}
+
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.8rem;
+    margin: 1.5rem 0;
+}
+
+.time-slot {
+    padding: 0.8rem;
+    border: 2px solid var(--light-green);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.time-slot.available {
+    background: rgba(46, 204, 113, 0.1);
+    border-color: var(--primary-green);
+}
+
+.time-slot.booked {
+    background: rgba(231, 76, 60, 0.1);
+    border-color: #e74c3c;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.time-slot.selected {
+    background: var(--primary-green);
+    color: white;
+    transform: scale(1.05);
+}
+
+.payment-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(46, 204, 113, 0.05);
+    border-radius: 8px;
+}
+
+.payment-section h3 {
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.payment-section p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-green);
+    margin-bottom: 1rem;
+}
+
+
+/* Dashboard Styles */
+
+.dashboard {
+    padding: 3rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 0 2rem;
+}
+
+.dashboard-nav {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 0 2rem;
+}
+
+.dashboard-nav button {
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.dashboard-nav button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+.dashboard-section {
+    background: white;
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin: 0 2rem;
+}
+
+.booking-item {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    background: rgba(46, 204, 113, 0.05);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-green);
+}
+
+.booking-item h4 {
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.booking-item p {
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+}
+
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+    }
+    .hamburger {
+        display: flex;
+    }
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    .turf-grid {
+        grid-template-columns: 1fr;
+    }
+    .filter-container {
+        flex-direction: column;
+    }
+    .modal-content {
+        margin: 10% 1rem;
+        padding: 2rem;
+    }
+}
+
+
+/* Footer - Modern Design */
+
+footer {
+    background: linear-gradient(135deg, var(--bg-dark), #34495e);
+    color: white;
+    text-align: center;
+    padding: 3rem 0;
+    margin-top: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-green), transparent);
+}
+
+footer p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+
+/* Additional Modern Elements */
+
+.card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--primary-green);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.loading-spinner {
+    border: 4px solid var(--light-green);
+    border-top: 4px solid var(--primary-green);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Hover effects for interactive elements */
+
+.hover-lift {
+    transition: var(--transition);
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+}
+
+
+/* Gradient text */
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>besturf - Find and Book Turfs Near You</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>besturf</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#turfs" class="nav-link">Turfs</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><button class="btn-login" onclick="openLoginModal()">Login</button></li>
+                <li><button class="btn-register" onclick="openRegisterModal()">Register</button></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Find & Book Turfs Near You</h1>
+            <p>Discover the best sports facilities in your area with real-time availability and instant booking</p>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search turfs by name, location, or sport...">
+                <button onclick="searchTurfs()"><i class="fas fa-search"></i></button>
+            </div>
+            <button class="btn-primary" onclick="getCurrentLocation()">Find Nearby Turfs</button>
+        </div>
+    </section>
+
+    <!-- Turf Listing Section -->
+    <section id="turfs" class="turf-section">
+        <div class="container">
+            <h2>Available Turfs</h2>
+            <div class="filter-container">
+                <select id="sportFilter">
+                    <option value="">All Sports</option>
+                    <option value="football">Football</option>
+                    <option value="cricket">Cricket</option>
+                    <option value="tennis">Tennis</option>
+                    <option value="badminton">Badminton</option>
+                </select>
+                <select id="priceFilter">
+                    <option value="">All Prices</option>
+                    <option value="0-500">₹0-₹500</option>
+                    <option value="500-1000">₹500-₹1000</option>
+                    <option value="1000+">₹1000+</option>
+                </select>
+                <button onclick="applyFilters()">Apply Filters</button>
+            </div>
+            <div id="turfList" class="turf-grid">
+                <!-- Turf cards will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="container">
+            <h2>View Turfs on Map</h2>
+            <div id="map" style="height: 400px;"></div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <select id="loginType">
+                    <option value="customer">Customer</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#" onclick="openRegisterModal()">Register here</a></p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRegisterModal()">&times;</span>
+            <h2>Register</h2>
+            <form id="registerForm">
+                <input type="text" id="regName" placeholder="Full Name" required>
+                <input type="email" id="regEmail" placeholder="Email" required>
+                <input type="password" id="regPassword" placeholder="Password" required>
+                <input type="tel" id="regPhone" placeholder="Phone Number" required>
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="#" onclick="openLoginModal()">Login here</a></p>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content booking-modal">
+            <span class="close" onclick="closeBookingModal()">&times;</span>
+            <h2>Book Your Slot</h2>
+            <div id="turfDetails"></div>
+            <div class="booking-form">
+                <label>Select Date:</label>
+                <input type="date" id="bookingDate" required>
+                <label>Select Time Slot:</label>
+                <div id="timeSlots" class="time-slots">
+                    <!-- Time slots will be dynamically loaded -->
+                </div>
+                <div class="payment-section">
+                    <h3>Payment Details</h3>
+                    <p>Amount: ₹<span id="bookingAmount">0</span></p>
+                    <button id="proceedToPayment" class="btn-primary">Proceed to Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <h2>Payment</h2>
+            <form id="paymentForm">
+                <input type="text" placeholder="Card Number" required>
+                <input type="text" placeholder="Cardholder Name" required>
+                <div class="card-details">
+                    <input type="text" placeholder="MM/YY" required>
+                    <input type="text" placeholder="CVV" required>
+                </div>
+                <button type="submit">Complete Payment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Dashboard -->
+    <div id="userDashboard" class="dashboard" style="display: none;">
+        <div class="dashboard-header">
+            <h2>My Dashboard</h2>
+            <button onclick="logout()">Logout</button>
+        </div>
+        <div class="dashboard-content">
+            <div class="dashboard-nav">
+                <button onclick="showSection('myBookings')">My Bookings</button>
+                <button onclick="showSection('profile')">Profile</button>
+            </div>
+            <div id="myBookings" class="dashboard-section">
+                <h3>My Bookings</h3>
+                <div id="bookingList"></div>
+            </div>
+            <div id="profile" class="dashboard-section" style="display: none;">
+                <h3>Profile</h3>
+                <form id="profileForm">
+                    <input type="text" id="profileName" placeholder="Name">
+                    <input type="email" id="profileEmail" placeholder="Email" readonly>
+                    <input type="tel" id="profilePhone" placeholder="Phone">
+                    <button type="submit">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 besturf. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
