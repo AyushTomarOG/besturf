@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Register - besturf</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>besturf</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="login.html" class="nav-link">Login</a></li>
+                <li><a href="register.html" class="nav-link active">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="modal-content" style="margin: 100px auto; max-width: 400px;">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <input type="text" id="regName" placeholder="Full Name" required />
+            <input type="email" id="regEmail" placeholder="Email" required />
+            <input type="password" id="regPassword" placeholder="Password" required />
+            <input type="tel" id="regPhone" placeholder="Phone Number" required />
+            <button type="submit">Register</button>
+        </form>
+        <p>
+            Already have an account?
+            <a href="login.html">Login here</a>
+        </p>
+        <button onclick="window.location.href='index.html'" style="margin-top: 1rem; background: #e74c3c; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">
+            Cancel
+        </button>
+    </section>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
