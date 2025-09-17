@@ -23,9 +23,6 @@ function initializeApp() {
     // Setup event listeners
     setupEventListeners();
     
-    // Setup modal click-outside functionality
-    setupModalClickOutside();
-    
     // Check for logged in user
     checkUserSession();
     
@@ -299,23 +296,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-// Modal functions
-function openLoginModal() {
-    document.getElementById('loginModal').style.display = 'block';
-}
-
-function closeLoginModal() {
-    document.getElementById('loginModal').style.display = 'none';
-}
-
-function openRegisterModal() {
-    document.getElementById('registerModal').style.display = 'block';
-    closeLoginModal();
-}
-
-function closeRegisterModal() {
-    document.getElementById('registerModal').style.display = 'none';
-}
+// Removed modal functions for login and register pages
 
 function openBookingModal(turfId) {
     const turf = turfData.find(t => t.id === turfId);
@@ -380,22 +361,6 @@ function selectTimeSlot(element) {
     bookingDetails.timeSlot = element.textContent;
 }
 
-// Setup modal click-outside functionality
-function setupModalClickOutside() {
-    // Get all modals
-    const modals = document.querySelectorAll('.modal');
-    
-    modals.forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            // Check if click was outside the modal content
-            if (e.target === modal) {
-                // Close the modal
-                modal.style.display = 'none';
-            }
-        });
-    });
-}
-
 // Event listeners setup
 function setupEventListeners() {
     // Search functionality
@@ -417,8 +382,21 @@ function setupEventListeners() {
     // Payment form
     document.getElementById('paymentForm').addEventListener('submit', handlePayment);
     
-    // Close modals when clicking outside
-    setupModalClickOutside();
+    // Close modals when clicking on modal background (outside modal-content)
+// Close modals when clicking on modal background (outside modal-content)
+window.addEventListener('click', function(e) {
+    // Select all modals
+    const modals = document.querySelectorAll('.modal');
+    
+    modals.forEach(modal => {
+        // If click is directly on the modal (background) itself
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+
+
     
     // Mobile menu
     const hamburger = document.querySelector('.hamburger');
@@ -448,11 +426,11 @@ function setupMobileMenu() {
 // Authentication functions
 function handleLogin(e) {
     e.preventDefault();
-    
+
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
     const type = document.getElementById('loginType').value;
-    
+
     // Mock authentication
     if (email && password) {
         currentUser = {
@@ -460,22 +438,24 @@ function handleLogin(e) {
             type,
             name: email.split('@')[0]
         };
-        
+
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        updateUIForLoggedInUser();
-        closeLoginModal();
         showNotification('Login successful!', 'success');
+        // Redirect to home page after successful login
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1000);
     }
 }
 
 function handleRegister(e) {
     e.preventDefault();
-    
+
     const name = document.getElementById('regName').value;
     const email = document.getElementById('regEmail').value;
     const password = document.getElementById('regPassword').value;
     const phone = document.getElementById('regPhone').value;
-    
+
     // Mock registration
     if (name && email && password && phone) {
         currentUser = {
@@ -484,11 +464,13 @@ function handleRegister(e) {
             phone,
             type: 'customer'
         };
-        
+
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        updateUIForLoggedInUser();
-        closeRegisterModal();
         showNotification('Registration successful!', 'success');
+        // Redirect to home page after successful registration
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1000);
     }
 }
 
@@ -685,10 +667,5 @@ window.besturf = {
     applyFilters,
     getCurrentLocation,
     openBookingModal,
-    openLoginModal,
-    openRegisterModal,
     logout
 };
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', initializeApp);
