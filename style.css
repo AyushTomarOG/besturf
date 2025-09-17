@@ -508,6 +508,8 @@ html {
     border-radius: var(--border-radius);
     width: 90%;
     max-width: 500px;
+    max-height: 80vh;
+    overflow: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     animation: slideIn 0.3s ease-out;
 }
@@ -765,55 +767,4 @@ footer p {
 }
 
 
-/* Additional Modern Elements */
 
-.card-badge {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: var(--primary-green);
-    color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.loading-spinner {
-    border: 4px solid var(--light-green);
-    border-top: 4px solid var(--primary-green);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-
-/* Hover effects for interactive elements */
-
-.hover-lift {
-    transition: var(--transition);
-}
-
-.hover-lift:hover {
-    transform: translateY(-5px);
-}
-
-
-/* Gradient text */
-
-.gradient-text {
-    background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
