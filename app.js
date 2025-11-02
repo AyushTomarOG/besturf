@@ -1,671 +1,408 @@
-// besturf - Turf Booking Platform JavaScript
-// Main application file with all functionality
-
-// Global variables
-let map;
-let userLocation = null;
+// Store data
 let turfData = [];
 let currentUser = null;
-let bookingDetails = {};
 
-// Initialize application
-document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
-});
-
-function initializeApp() {
-    // Initialize map
-    initMap();
-    
-    // Load turf data
+// Start app when page loads
+function initApp() {
     loadTurfData();
-    
-    // Setup event listeners
     setupEventListeners();
-    
-    // Check for logged in user
-    checkUserSession();
-    
-    // Setup mobile menu
-    setupMobileMenu();
+    checkLoginStatus();
 }
 
-// Map initialization
-function initMap() {
-    // Default coordinates (India)
-    const defaultCoords = [20.5937, 78.9629];
-    
-    map = L.map('map').setView(defaultCoords, 5);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-    
-    // Try to get user location
-    getCurrentLocation();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    // DOM already ready
+    initApp();
 }
 
-// Get user's current location
-function getCurrentLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                userLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                
-                // Update map view
-                map.setView([userLocation.lat, userLocation.lng], 13);
-                
-                // Add user location marker
-                L.marker([userLocation.lat, userLocation.lng])
-                    .addTo(map)
-                    .bindPopup('Your Location')
-                    .openPopup();
-                
-                // Find nearby turfs
-                findNearbyTurfs();
-            },
-            (error) => {
-                console.error('Error getting location:', error);
-                showNotification('Location access denied. Showing all turfs.', 'warning');
-            }
-        );
-    } else {
-        showNotification('Geolocation is not supported by this browser.', 'error');
-    }
-}
-
-// Load turf data (mock data for demo)
+// Load sample turf data
 function loadTurfData() {
     turfData = [
         {
             id: 1,
-            name: "Green Valley Sports Complex",
-            location: "Mumbai, Maharashtra",
-            sport: "football",
+            name: "Green Valley Sports",
+            location: "Mumbai",
+            sport: "Football",
             price: 800,
             rating: 4.5,
-            image: "🏟️",
-            amenities: ["Parking", "Changing Rooms", "Equipment Rental"],
-            lat: 19.0760,
-            lng: 72.8777,
-            availableSlots: ["09:00-10:00", "10:00-11:00", "14:00-15:00", "16:00-17:00"]
+            amenities: ["Parking", "Changing Rooms"]
         },
         {
             id: 2,
             name: "City Cricket Ground",
-            location: "Delhi, NCR",
-            sport: "cricket",
+            location: "Delhi",
+            sport: "Cricket",
             price: 1200,
             rating: 4.8,
-            image: "🏏",
-            amenities: ["Parking", "Cafeteria", "Coaching"],
-            lat: 28.7041,
-            lng: 77.1025,
-            availableSlots: ["08:00-10:00", "10:00-12:00", "14:00-16:00"]
+            amenities: ["Parking", "Cafeteria"]
         },
         {
             id: 3,
-            name: "Elite Tennis Academy",
-            location: "Bangalore, Karnataka",
-            sport: "tennis",
+            name: "Tennis Academy",
+            location: "Bangalore",
+            sport: "Tennis",
             price: 600,
             rating: 4.3,
-            image: "🎾",
-            amenities: ["Parking", "Coaching", "Equipment"],
-            lat: 12.9716,
-            lng: 77.5946,
-            availableSlots: ["06:00-07:00", "07:00-08:00", "18:00-19:00", "19:00-20:00"]
-        },
-        {
-            id: 4,
-            name: "Royal Badminton Court",
-            location: "Chennai, Tamil Nadu",
-            sport: "badminton",
-            price: 400,
-            rating: 4.6,
-            image: "🏸",
-            amenities: ["AC", "Parking", "Shower"],
-            lat: 13.0827,
-            lng: 80.2707,
-            availableSlots: ["07:00-08:00", "08:00-09:00", "17:00-18:00", "18:00-19:00"]
-        },
-        {
-            id: 5,
-            name: "Premier Football Arena",
-            location: "Pune, Maharashtra",
-            sport: "football",
-            price: 1000,
-            rating: 4.7,
-            image: "⚽",
-            amenities: ["Parking", "Cafeteria", "Live Streaming"],
-            lat: 18.5204,
-            lng: 73.8567,
-            availableSlots: ["09:00-10:00", "11:00-12:00", "15:00-16:00", "17:00-18:00"]
-        },
-        {
-            id: 6,
-            name: "Champions Cricket Club",
-            location: "Hyderabad, Telangana",
-            sport: "cricket",
-            price: 1500,
-            rating: 4.9,
-            image: "🏏",
-            amenities: ["Parking", "Coaching", "Equipment", "Cafeteria"],
-            lat: 17.4065,
-            lng: 78.4772,
-            availableSlots: ["07:00-09:00", "09:00-11:00", "14:00-16:00", "16:00-18:00"]
+            amenities: ["Parking", "Equipment"]
         }
     ];
     
     displayTurfs(turfData);
-    addMarkersToMap(turfData);
 }
 
 // Display turfs in grid
 function displayTurfs(turfs) {
     const turfList = document.getElementById('turfList');
+    if (!turfList) return;
+    
     turfList.innerHTML = '';
     
     if (turfs.length === 0) {
-        turfList.innerHTML = '<p class="no-results">No turfs found matching your criteria.</p>';
+        turfList.innerHTML = '<p>No turfs found</p>';
         return;
     }
     
     turfs.forEach(turf => {
-        const turfCard = createTurfCard(turf);
-        turfList.appendChild(turfCard);
-    });
-}
-
-// Create turf card element
-function createTurfCard(turf) {
-    const card = document.createElement('div');
-    card.className = 'turf-card';
-    card.innerHTML = `
-        <div class="turf-image">${turf.image}</div>
-        <div class="turf-info">
-            <h3 class="turf-name">${turf.name}</h3>
-            <p class="turf-location"><i class="fas fa-map-marker-alt"></i> ${turf.location}</p>
-            <p class="turf-sport"><i class="fas fa-futbol"></i> ${turf.sport.charAt(0).toUpperCase() + turf.sport.slice(1)}</p>
-            <p class="turf-price"><i class="fas fa-rupee-sign"></i> ${turf.price}/hour</p>
-            <div class="turf-rating">
-                <i class="fas fa-star" style="color: #ffd700;"></i> ${turf.rating}
-            </div>
-            <div class="turf-amenities">
-                <small>${turf.amenities.join(' • ')}</small>
-            </div>
-            <button class="book-btn" onclick="openBookingModal(${turf.id})">Book Now</button>
-        </div>
-    `;
-    return card;
-}
-
-// Add markers to map
-function addMarkersToMap(turfs) {
-    turfs.forEach(turf => {
-        const marker = L.marker([turf.lat, turf.lng])
-            .addTo(map)
-            .bindPopup(`
-                <div style="min-width: 200px;">
-                    <h4>${turf.name}</h4>
-                    <p>${turf.location}</p>
-                    <p>₹${turf.price}/hour</p>
-                    <button onclick="openBookingModal(${turf.id})" style="
-                        background: var(--primary-green);
-                        color: white;
-                        border: none;
-                        padding: 5px 10px;
-                        border-radius: 4px;
-                        cursor: pointer;
-                    ">Book Now</button>
-                </div>
-            `);
+        const card = document.createElement('div');
+        card.className = 'turf-card';
+        card.innerHTML = `
+            <h3>${turf.name}</h3>
+            <p>Location: ${turf.location}</p>
+            <p>Sport: ${turf.sport}</p>
+            <p>Price: ₹${turf.price}/hour</p>
+            <p>Rating: ${turf.rating}/5</p>
+            <p>Amenities: ${turf.amenities.join(', ')}</p>
+            <button onclick="bookTurf(${turf.id})">Book Now</button>
+        `;
+        turfList.appendChild(card);
     });
 }
 
 // Search functionality
 function searchTurfs() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
     
-    if (!searchTerm) {
+    const searchText = searchInput.value.toLowerCase();
+    
+    if (!searchText) {
         displayTurfs(turfData);
         return;
     }
     
     const filteredTurfs = turfData.filter(turf => 
-        turf.name.toLowerCase().includes(searchTerm) ||
-        turf.location.toLowerCase().includes(searchTerm) ||
-        turf.sport.toLowerCase().includes(searchTerm)
+        turf.name.toLowerCase().includes(searchText) ||
+        turf.location.toLowerCase().includes(searchText) ||
+        turf.sport.toLowerCase().includes(searchText)
     );
     
     displayTurfs(filteredTurfs);
 }
 
 // Filter functionality
-function applyFilters() {
-    const sportFilter = document.getElementById('sportFilter').value;
-    const priceFilter = document.getElementById('priceFilter').value;
+function filterTurfs() {
+    const sportFilter = document.getElementById('sportFilter');
+    const priceFilter = document.getElementById('priceFilter');
     
-    let filteredTurfs = [...turfData];
+    if (!sportFilter || !priceFilter) return;
     
-    if (sportFilter) {
-        filteredTurfs = filteredTurfs.filter(turf => turf.sport === sportFilter);
-    }
+    let filtered = [...turfData];
     
-    if (priceFilter) {
-        const [min, max] = priceFilter.split('-');
-        if (max === '+') {
-            filteredTurfs = filteredTurfs.filter(turf => turf.price >= parseInt(min));
-        } else {
-            filteredTurfs = filteredTurfs.filter(turf => 
-                turf.price >= parseInt(min) && turf.price <= parseInt(max)
-            );
-        }
-    }
-    
-    displayTurfs(filteredTurfs);
-}
-
-// Find nearby turfs
-function findNearbyTurfs() {
-    if (!userLocation) return;
-    
-    const nearbyTurfs = turfData.filter(turf => {
-        const distance = calculateDistance(
-            userLocation.lat, userLocation.lng,
-            turf.lat, turf.lng
+    // Filter by sport
+    if (sportFilter.value) {
+        filtered = filtered.filter(turf => 
+            turf.sport.toLowerCase() === sportFilter.value.toLowerCase()
         );
-        return distance <= 50; // 50km radius
-    });
+    }
     
-    displayTurfs(nearbyTurfs);
+    // Filter by price
+    if (priceFilter.value) {
+        const [min, max] = priceFilter.value.split('-').map(Number);
+        filtered = filtered.filter(turf => 
+            turf.price >= min && (!max || turf.price <= max)
+        );
+    }
+    
+    displayTurfs(filtered);
 }
 
-// Calculate distance between two points
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Earth's radius in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-}
-
-// Removed modal functions for login and register pages
-
-function openBookingModal(turfId) {
-    const turf = turfData.find(t => t.id === turfId);
+// Booking functionality
+function bookTurf(id) {
+    if (!currentUser) {
+        alert('Please login to book a turf');
+        window.location.href = 'login.html';
+        return;
+    }
+    const turf = turfData.find(t => t.id === id);
     if (!turf) return;
-    
-    bookingDetails = { turf };
-    
+
+    // Remember which turf is being booked
+    window.selectedTurfId = id;
+
     const modal = document.getElementById('bookingModal');
-    const turfDetails = document.getElementById('turfDetails');
-    
-    turfDetails.innerHTML = `
+    const details = document.getElementById('turfDetails');
+    const timeSlots = document.getElementById('timeSlots');
+    const bookingAmount = document.getElementById('bookingAmount');
+
+    if (!modal || !details || !timeSlots || !bookingAmount) return;
+
+    details.innerHTML = `
         <h3>${turf.name}</h3>
-        <p><i class="fas fa-map-marker-alt"></i> ${turf.location}</p>
-        <p><i class="fas fa-rupee-sign"></i> ₹${turf.price}/hour</p>
+        <p>Location: ${turf.location}</p>
+        <p>Price: ₹${turf.price}/hour</p>
     `;
-    
-    // Set minimum date to today
-    const bookingDate = document.getElementById('bookingDate');
-    bookingDate.min = new Date().toISOString().split('T')[0];
-    bookingDate.value = new Date().toISOString().split('T')[0];
-    
-    // Load time slots
-    loadTimeSlots(turf.availableSlots);
-    
-    document.getElementById('bookingAmount').textContent = turf.price;
-    
+
+    // Populate time slots for this turf
+    generateTimeSlots(turf);
+
+    // Set amount shown in booking modal to 0 until user selects slots
+    bookingAmount.textContent = 0;
+
+    // Show modal
     modal.style.display = 'block';
 }
 
-function closeBookingModal() {
-    document.getElementById('bookingModal').style.display = 'none';
-}
+// Generate simple list of time slots
+function generateTimeSlots(turf) {
+    const timeSlots = document.getElementById('timeSlots');
+    if (!timeSlots) return;
 
-function openPaymentModal() {
-    document.getElementById('paymentModal').style.display = 'block';
-}
+    const slots = [
+        '06:00 - 07:00',
+        '07:00 - 08:00',
+        '08:00 - 09:00',
+        '17:00 - 18:00',
+        '18:00 - 19:00',
+        '19:00 - 20:00'
+    ];
 
-function closePaymentModal() {
-    document.getElementById('paymentModal').style.display = 'none';
-}
-
-// Load time slots
-function loadTimeSlots(slots) {
-    const timeSlotsContainer = document.getElementById('timeSlots');
-    timeSlotsContainer.innerHTML = '';
-    
-    slots.forEach(slot => {
-        const slotElement = document.createElement('div');
-        slotElement.className = 'time-slot available';
-        slotElement.textContent = slot;
-        slotElement.onclick = () => selectTimeSlot(slotElement);
-        timeSlotsContainer.appendChild(slotElement);
+    timeSlots.innerHTML = '';
+    // Use checkboxes so user can select multiple slots
+    slots.forEach((s, idx) => {
+        const id = `slot_${turf.id}_${idx}`;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'slot-item';
+        wrapper.innerHTML = `
+            <label for="${id}" class="slot-label-wrapper">
+                <input type="checkbox" name="selectedSlots" id="${id}" value="${s}">
+                <span class="slot-label">${s}</span>
+            </label>
+        `;
+        timeSlots.appendChild(wrapper);
     });
+
+    // Attach change listener to update amount when slots change
+    const checkboxes = timeSlots.querySelectorAll('input[name="selectedSlots"]');
+    checkboxes.forEach(ch => ch.addEventListener('change', updateBookingAmount));
 }
 
-// Select time slot
-function selectTimeSlot(element) {
-    document.querySelectorAll('.time-slot').forEach(slot => {
-        slot.classList.remove('selected');
-    });
-    element.classList.add('selected');
-    bookingDetails.timeSlot = element.textContent;
+// Update booking amount shown based on selected slots
+function updateBookingAmount() {
+    const turfId = window.selectedTurfId;
+    const turf = turfData.find(t => t.id === turfId);
+    const bookingAmount = document.getElementById('bookingAmount');
+    if (!turf || !bookingAmount) return;
+
+    const selected = document.querySelectorAll('input[name="selectedSlots"]:checked');
+    const count = selected ? selected.length : 0;
+    const total = turf.price * count;
+
+    // show total (if none selected, 0)
+    bookingAmount.textContent = total;
 }
 
-// Event listeners setup
-function setupEventListeners() {
-    // Search functionality
-    document.getElementById('searchInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchTurfs();
-        }
-    });
-    
-    // Login form
-    document.getElementById('loginForm').addEventListener('submit', handleLogin);
-    
-    // Register form
-    document.getElementById('registerForm').addEventListener('submit', handleRegister);
-    
-    // Booking form
-    document.getElementById('bookingForm').addEventListener('submit', handleBooking);
-    
-    // Payment form
-    document.getElementById('paymentForm').addEventListener('submit', handlePayment);
-    
-    // Close modals when clicking on modal background (outside modal-content)
-// Close modals when clicking on modal background (outside modal-content)
-window.addEventListener('click', function(e) {
-    // Select all modals
-    const modals = document.querySelectorAll('.modal');
-    
-    modals.forEach(modal => {
-        // If click is directly on the modal (background) itself
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-});
-
-
-    
-    // Mobile menu
-    const hamburger = document.querySelector('.hamburger');
-    const navMenu = document.querySelector('.nav-menu');
-    
-    if (hamburger) {
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-    }
-}
-
-// Setup mobile menu
-function setupMobileMenu() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    const navMenu = document.querySelector('.nav-menu');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            document.querySelector('.hamburger')?.classList.remove('active');
-            navMenu?.classList.remove('active');
-        });
-    });
-}
-
-// Authentication functions
+// Login functionality
 function handleLogin(e) {
-    e.preventDefault();
+    try {
+        if (e && e.preventDefault) e.preventDefault();
+        console.log('handleLogin called');
 
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const type = document.getElementById('loginType').value;
+        const emailEl = document.getElementById('loginEmail');
+        const passEl = document.getElementById('loginPassword');
+        if (!emailEl || !passEl) {
+            alert('Login form elements not found');
+            console.error('Missing loginEmail or loginPassword element');
+            return false;
+        }
 
-    // Mock authentication
-    if (email && password) {
-        currentUser = {
-            email,
-            type,
-            name: email.split('@')[0]
-        };
+        const email = emailEl.value;
+        const password = passEl.value;
 
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        showNotification('Login successful!', 'success');
-        // Redirect to home page after successful login
-        setTimeout(() => {
+        console.log('Login attempt', { email: email });
+
+        if (email && password) {
+            // Simple login (no real authentication)
+            currentUser = {
+                email: email,
+                name: email.split('@')[0]
+            };
+
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            // redirect
             window.location.href = 'index.html';
-        }, 1000);
+            return true;
+        } else {
+            alert('Please fill in all fields');
+            return false;
+        }
+    } catch (err) {
+        console.error('Error in handleLogin:', err);
+        alert('An error occurred during login. Check developer console for details.');
+        return false;
     }
 }
 
-function handleRegister(e) {
-    e.preventDefault();
+// Ensure the function is available for inline onsubmit handlers
+window.handleLogin = handleLogin;
 
-    const name = document.getElementById('regName').value;
-    const email = document.getElementById('regEmail').value;
-    const password = document.getElementById('regPassword').value;
-    const phone = document.getElementById('regPhone').value;
 
-    // Mock registration
-    if (name && email && password && phone) {
-        currentUser = {
-            name,
-            email,
-            phone,
-            type: 'customer'
-        };
 
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        showNotification('Registration successful!', 'success');
-        // Redirect to home page after successful registration
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 1000);
-    }
-}
-
-// Update UI for logged in user
-function updateUIForLoggedInUser() {
-    if (!currentUser) return;
-    
-    // Hide login/register buttons
-    document.querySelector('.btn-login').style.display = 'none';
-    document.querySelector('.btn-register').style.display = 'none';
-    
-    // Show user menu or dashboard
-    const navMenu = document.querySelector('.nav-menu');
-    const userItem = document.createElement('li');
-    userItem.innerHTML = `
-        <span style="color: white; margin-right: 10px;">Hi ${currentUser.name}!</span>
-        <button onclick="showDashboard()" style="background: var(--primary-green); color: white; border: none; padding: 5px 10px; border-radius: 4px;">Dashboard</button>
-        <button onclick="logout()" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-left: 5px;">Logout</button>
-    `;
-    navMenu.appendChild(userItem);
-}
-
-// Show dashboard
-function showDashboard() {
-    document.getElementById('userDashboard').style.display = 'block';
-    loadUserBookings();
-}
-
-// Load user bookings
-function loadUserBookings() {
-    const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
-    const bookingList = document.getElementById('bookingList');
-    
-    if (bookings.length === 0) {
-        bookingList.innerHTML = '<p>No bookings yet.</p>';
-        return;
-    }
-    
-    bookingList.innerHTML = bookings.map(booking => `
-        <div class="booking-item">
-            <h4>${booking.turfName}</h4>
-            <p><strong>Date:</strong> ${booking.date}</p>
-            <p><strong>Time:</strong> ${booking.timeSlot}</p>
-            <p><strong>Amount:</strong> ₹${booking.amount}</p>
-            <p><strong>Status:</strong> ${booking.status}</p>
-        </div>
-    `).join('');
-}
-
-// Handle booking
-function handleBooking(e) {
-    e.preventDefault();
-    
-    const date = document.getElementById('bookingDate').value;
-    const timeSlot = bookingDetails.timeSlot;
-    
-    if (!timeSlot) {
-        showNotification('Please select a time slot', 'error');
-        return;
-    }
-    
-    bookingDetails.date = date;
-    bookingDetails.amount = bookingDetails.turf.price;
-    
-    openPaymentModal();
-}
-
-// Handle payment
-function handlePayment(e) {
-    e.preventDefault();
-    
-    // Mock payment processing
-    const booking = {
-        id: Date.now(),
-        turfName: bookingDetails.turf.name,
-        date: bookingDetails.date,
-        timeSlot: bookingDetails.timeSlot,
-        amount: bookingDetails.amount,
-        status: 'Confirmed',
-        bookedAt: new Date().toISOString()
-    };
-    
-    // Save booking
-    const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
-    bookings.push(booking);
-    localStorage.setItem('userBookings', JSON.stringify(bookings));
-    
-    closePaymentModal();
-    closeBookingModal();
-    
-    showNotification('Booking confirmed! Check your dashboard.', 'success');
-    
-    // Reload bookings
-    if (document.getElementById('userDashboard').style.display !== 'none') {
-        loadUserBookings();
-    }
-}
-
-// Check user session
-function checkUserSession() {
+// Check login status
+function checkLoginStatus() {
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
-        updateUIForLoggedInUser();
+        updateUI();
     }
 }
 
-// Logout function
+// Update UI based on login status
+function updateUI() {
+    const loginLink = document.querySelector('a[href="login.html"]');
+    const navMenu = document.querySelector('.nav-menu');
+
+    if (!navMenu) return;
+
+    // If user is logged in, show welcome message and logout button
+    if (currentUser) {
+        const welcomeHtml = `<li class="nav-user"><span>Welcome, ${currentUser.name}</span> <button onclick="logout()" class="nav-logout">Logout</button></li>`;
+
+        if (loginLink && loginLink.parentElement) {
+            loginLink.parentElement.outerHTML = welcomeHtml;
+        } else {
+            const existing = navMenu.querySelector('.nav-user');
+            if (!existing) navMenu.insertAdjacentHTML('beforeend', welcomeHtml);
+        }
+        return;
+    }
+
+    // Not logged in: show login link
+    const existingWelcome = navMenu.querySelector('.nav-user');
+    if (existingWelcome) existingWelcome.remove();
+
+    if (!loginLink) {
+        navMenu.insertAdjacentHTML('beforeend', '<li><a href="login.html">Login</a></li>');
+    }
+}
+
+// Logout functionality
 function logout() {
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('userBookings');
     currentUser = null;
-    location.reload();
+    window.location.reload();
 }
 
-// Show dashboard section
-function showSection(sectionId) {
-    document.querySelectorAll('.dashboard-section').forEach(section => {
-        section.style.display = 'none';
-    });
-    document.getElementById(sectionId).style.display = 'block';
-}
-
-// Notification system
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    
-    // Style the notification
-    Object.assign(notification.style, {
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        padding: '15px 20px',
-        borderRadius: '8px',
-        color: 'white',
-        zIndex: '9999',
-        fontWeight: '500',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-        transform: 'translateX(100%)',
-        transition: 'transform 0.3s ease'
-    });
-    
-    // Set background color based on type
-    switch(type) {
-        case 'success':
-            notification.style.background = '#2ecc71';
-            break;
-        case 'error':
-            notification.style.background = '#e74c3c';
-            break;
-        case 'warning':
-            notification.style.background = '#f39c12';
-            break;
-        default:
-            notification.style.background = '#3498db';
+// Setup event listeners
+function setupEventListeners() {
+    // Search on Enter key
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchTurfs();
+            }
+        });
     }
     
-    document.body.appendChild(notification);
+    // Login form
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
     
-    // Animate in
-    setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
+
     
-    // Remove after 3 seconds
-    setTimeout(() => {
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 300);
-    }, 3000);
+    // Close modals when clicking outside
+    window.onclick = function(e) {
+        if (e.target.className === 'modal') {
+            e.target.style.display = 'none';
+        }
+    };
+
+    // Proceed to payment button
+    const proceedBtn = document.getElementById('proceedToPayment');
+    if (proceedBtn) {
+        proceedBtn.addEventListener('click', function() {
+            // Ensure a date and at least one slot are selected
+            const dateInput = document.getElementById('bookingDate');
+            const selectedSlots = document.querySelectorAll('input[name="selectedSlots"]:checked');
+            if (!dateInput || !dateInput.value) {
+                alert('Please select a date');
+                return;
+            }
+            if (!selectedSlots || selectedSlots.length === 0) {
+                alert('Please select at least one time slot');
+                return;
+            }
+
+            // Optionally update payment amount display here
+            const turfId = window.selectedTurfId;
+            const turf = turfData.find(t => t.id === turfId);
+            const amountEl = document.getElementById('bookingAmount');
+            if (amountEl && turf) {
+                amountEl.textContent = turf.price * selectedSlots.length;
+            }
+
+            // Open payment modal
+            const paymentModal = document.getElementById('paymentModal');
+            if (paymentModal) paymentModal.style.display = 'block';
+        });
+    }
+
+    // Payment form submit
+    const paymentForm = document.getElementById('paymentForm');
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Gather booking info
+            const turfId = window.selectedTurfId;
+            const turf = turfData.find(t => t.id === turfId);
+            const dateInput = document.getElementById('bookingDate');
+            const selectedNodes = document.querySelectorAll('input[name="selectedSlots"]:checked');
+            const selectedSlots = Array.from(selectedNodes).map(n => n.value);
+            const amount = turf ? turf.price * selectedSlots.length : 0;
+
+            if (!turf || !dateInput || !dateInput.value || selectedSlots.length === 0) {
+                alert('Missing booking information');
+                return;
+            }
+
+            const booking = {
+                id: Date.now(),
+                turfId: turf.id,
+                turfName: turf.name,
+                date: dateInput.value,
+                slots: selectedSlots,
+                amount: amount,
+                user: currentUser ? currentUser.email : 'guest'
+            };
+
+            // Save booking to localStorage
+            const saved = JSON.parse(localStorage.getItem('bookings') || '[]');
+            saved.push(booking);
+            localStorage.setItem('bookings', JSON.stringify(saved));
+
+            // Close modals and notify user
+            const paymentModalEl = document.getElementById('paymentModal');
+            const bookingModalEl = document.getElementById('bookingModal');
+            if (paymentModalEl) paymentModalEl.style.display = 'none';
+            if (bookingModalEl) bookingModalEl.style.display = 'none';
+
+            alert('Payment successful! Your booking is confirmed.');
+
+        });
+    }
 }
 
-// Utility functions
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-IN', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-}
-
-function formatTime(timeString) {
-    return timeString;
-}
-
-// Export functions for global access
-window.besturf = {
-    searchTurfs,
-    applyFilters,
-    getCurrentLocation,
-    openBookingModal,
-    logout
-};
