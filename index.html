@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>besturf - Find and Book Turfs Near You</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -18,37 +16,28 @@
                 <h2>besturf</h2>
             </div>
             <ul class="nav-menu">
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#turfs" class="nav-link">Turfs</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="login.html" class="btn-login">Login</a></li>
-                <li><a href="register.html" class="btn-register">Register</a></li>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#turfs">Turfs</a></li>
+                <li><a href="login.html">Login</a></li>
             </ul>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1>Find & Book Turfs Near You</h1>
-            <p>Discover the best sports facilities in your area with real-time availability and instant booking</p>
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search turfs by name, location, or sport...">
-                <button onclick="searchTurfs()"><i class="fas fa-search"></i></button>
-            </div>
-            <button class="btn-primary" onclick="getCurrentLocation()">Find Nearby Turfs</button>
+    <!-- Main Content -->
+    <div id="home" class="hero">
+        <h1>Find & Book Turfs Near You</h1>
+        <p>Discover sports facilities in your area</p>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search turfs...">
+            <button onclick="searchTurfs()">Search</button>
         </div>
-    </section>
+    </div>
 
-    <!-- Turf Listing Section -->
-    <section id="turfs" class="turf-section">
+    <!-- Turf List -->
+    <div id="turfs" class="turf-section">
         <div class="container">
             <h2>Available Turfs</h2>
+            <!-- Filters -->
             <div class="filter-container">
                 <select id="sportFilter">
                     <option value="">All Sports</option>
@@ -59,32 +48,22 @@
                 </select>
                 <select id="priceFilter">
                     <option value="">All Prices</option>
-                    <option value="0-500">₹0-₹500</option>
+                    <option value="0-500">Under ₹500</option>
                     <option value="500-1000">₹500-₹1000</option>
-                    <option value="1000+">₹1000+</option>
+                    <option value="1000+">Above ₹1000</option>
                 </select>
-                <button onclick="applyFilters()">Apply Filters</button>
+                    <button onclick="filterTurfs()">Filter</button>
             </div>
-            <div id="turfList" class="turf-grid">
-                <!-- Turf cards will be dynamically loaded here -->
-            </div>
+            <!-- Turf Cards -->
+            <div id="turfList" class="turf-grid"></div>
         </div>
-    </section>
-
-    <!-- Map Section -->
-    <section class="map-section">
-        <div class="container">
-            <h2>View Turfs on Map</h2>
-            <div id="map" style="height: 400px;"></div>
-        </div>
-    </section>
+    </div>
 
 
 
     <!-- Booking Modal -->
     <div id="bookingModal" class="modal">
         <div class="modal-content booking-modal">
-            <span class="close" onclick="closeBookingModal()">&times;</span>
             <h2>Book Your Slot</h2>
             <div id="turfDetails"></div>
             <div class="booking-form">
@@ -106,7 +85,6 @@
     <!-- Payment Modal -->
     <div id="paymentModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closePaymentModal()">&times;</span>
             <h2>Payment</h2>
             <form id="paymentForm">
                 <input type="text" placeholder="Card Number" required>
@@ -120,43 +98,13 @@
         </div>
     </div>
 
-    <!-- User Dashboard -->
-    <div id="userDashboard" class="dashboard" style="display: none;">
-        <div class="dashboard-header">
-            <h2>My Dashboard</h2>
-            <button onclick="logout()">Logout</button>
-        </div>
-        <div class="dashboard-content">
-            <div class="dashboard-nav">
-                <button onclick="showSection('myBookings')">My Bookings</button>
-                <button onclick="showSection('profile')">Profile</button>
-            </div>
-            <div id="myBookings" class="dashboard-section">
-                <h3>My Bookings</h3>
-                <div id="bookingList"></div>
-            </div>
-            <div id="profile" class="dashboard-section" style="display: none;">
-                <h3>Profile</h3>
-                <form id="profileForm">
-                    <input type="text" id="profileName" placeholder="Name">
-                    <input type="email" id="profileEmail" placeholder="Email" readonly>
-                    <input type="tel" id="profilePhone" placeholder="Phone">
-                    <button type="submit">Update Profile</button>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <p>&copy; 2025 besturf. All rights reserved.</p>
-        </div>
+        <p>&copy; 2025 besturf</p>
     </footer>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="app.js"></script>
 </body>
 
 </html>
-
