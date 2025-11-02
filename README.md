@@ -19,9 +19,8 @@
 ## Technologies Used
 
 - **Frontend:** HTML, CSS (renamed to `styles.css`), JavaScript  
-- **Map Integration:** Leaflet.js with OpenStreetMap tiles  
 - **Storage:** LocalStorage (for user sessions and bookings)  
-- **Icons:** Font Awesome  
+  
 
 ## Repository URL
 - https://github.com/AyushTomarOG/besturf.git
