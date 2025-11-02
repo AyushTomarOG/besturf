@@ -1,49 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - besturf</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
                 <h2>besturf</h2>
             </div>
             <ul class="nav-menu">
-                <li><a href="index.html" class="nav-link">Home</a></li>
-                <li><a href="login.html" class="nav-link active">Login</a></li>
-                <li><a href="register.html" class="nav-link">Register</a></li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html">Login</a></li>
             </ul>
         </div>
     </nav>
 
-    <section class="modal-content" style="margin: 100px auto; max-width: 400px;">
-        <h2>Login</h2>
-        <form id="loginForm">
-            <input type="email" id="loginEmail" placeholder="Email" required />
-            <input type="password" id="loginPassword" placeholder="Password" required />
-            <select id="loginType">
-                <option value="customer">Customer</option>
-                <option value="admin">Admin</option>
-            </select>
-            <button type="submit">Login</button>
-        </form>
-        <p>
-            Don't have an account?
-            <a href="register.html">Register here</a>
-        </p>
-        <button onclick="window.location.href='index.html'" style="margin-top: 1rem; background: #e74c3c; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">
-            Cancel
-        </button>
-    </section>
+    <!-- Login Form -->
+    <div class="form-container">
+        <!-- Login Form (shows when not logged in) -->
+        <div id="loginBox">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginType">User Type:</label>
+                    <select id="loginType">
+                        <option value="customer">Customer</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit">Login</button>
+                <button type="button" onclick="window.location.href='index.html'">Cancel</button>
+            </form>
+        </div>
 
-    <script src="js/app.js"></script>
+        <!-- Welcome box (shows when logged in) -->
+        <div id="welcomeBox" style="display:none; text-align:center;">
+            <h2>Welcome</h2>
+            <p id="welcomeName">Hello, User</p>
+            <button id="logoutBtn">Logout</button>
+            <div style="margin-top:10px;"><a href="index.html">Go to Home</a></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Toggle login/welcome view based on localStorage
+        (function() {
+            try {
+                const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const loginBox = document.getElementById('loginBox');
+                const welcomeBox = document.getElementById('welcomeBox');
+                const welcomeName = document.getElementById('welcomeName');
+                const logoutBtn = document.getElementById('logoutBtn');
+
+                if (user && welcomeBox && loginBox) {
+                    loginBox.style.display = 'none';
+                    welcomeBox.style.display = 'block';
+                    welcomeName.textContent = 'Hello, ' + (user.name || user.email || 'User');
+                } else if (loginBox && welcomeBox) {
+                    loginBox.style.display = 'block';
+                    welcomeBox.style.display = 'none';
+                }
+
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function() {
+                        // Use the existing logout function if available
+                        if (typeof logout === 'function') {
+                            logout();
+                        } else {
+                            localStorage.removeItem('currentUser');
+                            window.location.reload();
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Error toggling login/welcome view', err);
+            }
+        })();
+    </script>
 </body>
-
 </html>
