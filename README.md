@@ -6,7 +6,6 @@
 
 ## Features
 
-- **Interactive Map:** Visualize turf locations using OpenStreetMap.
 - **Search & Filter:** Search turfs by name, location, or sport; filter by price and type of sport.
 - **Booking System:** Book slots for your favorite turf with date and time selection.
 - **User Authentication:** Login and registration for users; dashboard to track bookings.
