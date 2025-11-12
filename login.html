@@ -1,89 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - besturf</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <h2>besturf</h2>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="login.html">Login</a></li>
-            </ul>
+      <div class="nav-container">
+        <div class="nav-logo">
+          <h2>besturf</h2>
         </div>
+        <ul class="nav-menu">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="login.html">Login</a></li>
+        </ul>
+      </div>
     </nav>
 
-    <!-- Login Form -->
+    <!-- Login/Register Form -->
     <div class="form-container">
-        <!-- Login Form (shows when not logged in) -->
-        <div id="loginBox">
-            <h2>Login</h2>
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label for="loginEmail">Email:</label>
-                    <input type="email" id="loginEmail" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Password:</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <button type="submit">Login</button>
-                <button type="button" onclick="window.location.href='index.html'">Cancel</button>
-            </form>
-        </div>
+      <!-- Login Form -->
+      <div id="loginBox">
+        <h2>Login</h2>
+        <div id="loginMessage" class="message"></div>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required />
+          </div>
+          <button type="submit">Login</button>
+          <button type="button" onclick="window.location.href='index.html'">
+            Cancel
+          </button>
+        </form>
+        <p style="margin-top: 15px; text-align: center">
+          First time user?
+          <a href="#" onclick="toggleForms(); return false;">Register here</a>
+        </p>
+      </div>
 
-        <!-- Welcome box (shows when logged in) -->
-        <div id="welcomeBox" style="display:none; text-align:center;">
-            <h2>Welcome</h2>
-            <p id="welcomeName">Hello, User</p>
-            <button id="logoutBtn">Logout</button>
-            <div style="margin-top:10px;"><a href="index.html">Go to Home</a></div>
-        </div>
+      <!-- Register Form -->
+      <div id="registerBox" style="display: none">
+        <h2>Register</h2>
+        <div id="registerMessage" class="message"></div>
+        <form id="registerForm" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label for="registerName">Full Name:</label>
+            <input type="text" id="registerName" required />
+          </div>
+          <div class="form-group">
+            <label for="registerEmail">Email:</label>
+            <input type="email" id="registerEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="registerPassword">Password:</label>
+            <input type="password" id="registerPassword" required />
+            <small style="color: #666">Min 6 characters</small>
+          </div>
+          <div class="form-group">
+            <label for="registerConfirmPassword">Confirm Password:</label>
+            <input type="password" id="registerConfirmPassword" required />
+          </div>
+          <button type="submit">Register</button>
+          <button type="button" onclick="toggleForms(); return false;">
+            Back to Login
+          </button>
+        </form>
+      </div>
+
+      <!-- Welcome box (shows when logged in) -->
+      <div id="welcomeBox" style="display: none; text-align: center">
+        <h2>Welcome</h2>
+        <p id="welcomeName">Hello, User</p>
+        <button id="logoutBtn">Logout</button>
+        <div style="margin-top: 10px"><a href="index.html">Go to Home</a></div>
+      </div>
     </div>
+
+    <style>
+      .message {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        display: none;
+      }
+      .message.error {
+        background-color: #fee;
+        color: #c33;
+        border: 1px solid #fcc;
+        display: block;
+      }
+      .message.success {
+        background-color: #efe;
+        color: #3c3;
+        border: 1px solid #cfc;
+        display: block;
+      }
+    </style>
 
     <script src="app.js"></script>
     <script>
-        // Toggle login/welcome view based on localStorage
-        (function() {
-            try {
-                const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                const loginBox = document.getElementById('loginBox');
-                const welcomeBox = document.getElementById('welcomeBox');
-                const welcomeName = document.getElementById('welcomeName');
-                const logoutBtn = document.getElementById('logoutBtn');
+      // Toggle between login and register forms
+      function toggleForms() {
+        const loginBox = document.getElementById("loginBox");
+        const registerBox = document.getElementById("registerBox");
+        loginBox.style.display =
+          loginBox.style.display === "none" ? "block" : "none";
+        registerBox.style.display =
+          registerBox.style.display === "none" ? "block" : "none";
+        clearMessages();
+      }
 
-                if (user && welcomeBox && loginBox) {
-                    loginBox.style.display = 'none';
-                    welcomeBox.style.display = 'block';
-                    welcomeName.textContent = 'Hello, ' + (user.name || user.email || 'User');
-                } else if (loginBox && welcomeBox) {
-                    loginBox.style.display = 'block';
-                    welcomeBox.style.display = 'none';
-                }
+      // Clear messages
+      function clearMessages() {
+        document.getElementById("loginMessage").textContent = "";
+        document.getElementById("loginMessage").className = "message";
+        document.getElementById("registerMessage").textContent = "";
+        document.getElementById("registerMessage").className = "message";
+      }
 
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', function() {
-                        // Use the existing logout function if available
-                        if (typeof logout === 'function') {
-                            logout();
-                        } else {
-                            localStorage.removeItem('currentUser');
-                            window.location.reload();
-                        }
-                    });
-                }
-            } catch (err) {
-                console.error('Error toggling login/welcome view', err);
-            }
-        })();
+      // Show message
+      function showMessage(elementId, message, type) {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.className = "message " + type;
+      }
+
+      // Handle Login
+      function handleLogin(event) {
+        event.preventDefault();
+        clearMessages();
+
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+
+        // Validate inputs
+        if (!email || !password) {
+          showMessage("loginMessage", "Please fill in all fields", "error");
+          return;
+        }
+
+        // Get all registered users
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const user = users.find((u) => u.email === email);
+
+        if (!user) {
+          showMessage(
+            "loginMessage",
+            "Email not found. Please register first.",
+            "error"
+          );
+          return;
+        }
+
+        if (user.password !== password) {
+          showMessage("loginMessage", "Incorrect password", "error");
+          return;
+        }
+
+        // Login successful
+        localStorage.setItem(
+          "currentUser",
+          JSON.stringify({
+            name: user.name,
+            email: user.email,
+          })
+        );
+        showMessage(
+          "loginMessage",
+          "Login successful! Redirecting...",
+          "success"
+        );
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+
+      // Handle Register
+      function handleRegister(event) {
+        event.preventDefault();
+        clearMessages();
+
+        const name = document.getElementById("registerName").value.trim();
+        const email = document.getElementById("registerEmail").value.trim();
+        const password = document.getElementById("registerPassword").value;
+        const confirmPassword = document.getElementById(
+          "registerConfirmPassword"
+        ).value;
+
+        // Validate inputs
+        if (!name || !email || !password || !confirmPassword) {
+          showMessage("registerMessage", "Please fill in all fields", "error");
+          return;
+        }
+
+        if (password.length < 6) {
+          showMessage(
+            "registerMessage",
+            "Password must be at least 6 characters",
+            "error"
+          );
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          showMessage("registerMessage", "Passwords do not match", "error");
+          return;
+        }
+
+        // Check if email already exists
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        if (users.some((u) => u.email === email)) {
+          showMessage(
+            "registerMessage",
+            "Email already registered. Please login instead.",
+            "error"
+          );
+          return;
+        }
+
+        // Register new user
+        users.push({
+          name: name,
+          email: email,
+          password: password,
+        });
+        localStorage.setItem("users", JSON.stringify(users));
+
+        showMessage(
+          "registerMessage",
+          "Registration successful! Switching to login...",
+          "success"
+        );
+        setTimeout(() => {
+          document.getElementById("registerForm").reset();
+          toggleForms();
+        }, 1500);
+      }
+
+      // Toggle login/welcome view based on localStorage
+      (function () {
+        try {
+          const user = JSON.parse(
+            localStorage.getItem("currentUser") || "null"
+          );
+          const loginBox = document.getElementById("loginBox");
+          const registerBox = document.getElementById("registerBox");
+          const welcomeBox = document.getElementById("welcomeBox");
+          const welcomeName = document.getElementById("welcomeName");
+          const logoutBtn = document.getElementById("logoutBtn");
+
+          if (user && welcomeBox && loginBox) {
+            loginBox.style.display = "none";
+            registerBox.style.display = "none";
+            welcomeBox.style.display = "block";
+            welcomeName.textContent =
+              "Hello, " + (user.name || user.email || "User");
+          } else if (loginBox && welcomeBox) {
+            loginBox.style.display = "block";
+            welcomeBox.style.display = "none";
+          }
+
+          if (logoutBtn) {
+            logoutBtn.addEventListener("click", function () {
+              localStorage.removeItem("currentUser");
+              window.location.reload();
+            });
+          }
+        } catch (err) {
+          console.error("Error toggling login/welcome view", err);
+        }
+      })();
     </script>
-</body>
+  </body>
 </html>
-
