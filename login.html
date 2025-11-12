@@ -54,6 +54,7 @@
           <div class="form-group">
             <label for="registerName">Full Name:</label>
             <input type="text" id="registerName" required />
+            <small style="color: #666">Letters and spaces only</small>
           </div>
           <div class="form-group">
             <label for="registerEmail">Email:</label>
@@ -62,7 +63,9 @@
           <div class="form-group">
             <label for="registerPassword">Password:</label>
             <input type="password" id="registerPassword" required />
-            <small style="color: #666">Min 6 characters</small>
+            <small style="color: #666"
+              >Min 6 characters with special character (!@#$%^&*)</small
+            >
           </div>
           <div class="form-group">
             <label for="registerConfirmPassword">Confirm Password:</label>
@@ -133,6 +136,18 @@
         element.className = "message " + type;
       }
 
+      // Validate name - only letters and spaces
+      function isValidName(name) {
+        const nameRegex = /^[a-zA-Z\s]+$/;
+        return nameRegex.test(name);
+      }
+
+      // Validate password - must contain at least one special character
+      function isValidPassword(password) {
+        const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+        return specialCharRegex.test(password);
+      }
+
       // Handle Login
       function handleLogin(event) {
         event.preventDefault();
@@ -201,10 +216,30 @@
           return;
         }
 
+        // Validate name - only characters and spaces
+        if (!isValidName(name)) {
+          showMessage(
+            "registerMessage",
+            "Name can only contain letters and spaces",
+            "error"
+          );
+          return;
+        }
+
         if (password.length < 6) {
           showMessage(
             "registerMessage",
             "Password must be at least 6 characters",
+            "error"
+          );
+          return;
+        }
+
+        // Validate password contains special character
+        if (!isValidPassword(password)) {
+          showMessage(
+            "registerMessage",
+            "Password must contain at least one special character (!@#$%^&*()_+-=[]{};\\':\"|,.<>/?)",
             "error"
           );
           return;
