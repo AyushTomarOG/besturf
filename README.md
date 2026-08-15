@@ -1,6 +1,6 @@
-# Besturf - Turf Booking Platform
+# besturf - Turf Booking Platform
 
-**Besturf** is a web-based turf booking management system designed to make booking sports turfs easy, fast, and convenient. Users can search for nearby turfs, filter by sport and price, view turf details, and book slots online.  
+**besturf** is a web-based turf booking management system designed to make booking sports turfs easy, fast, and convenient. Users can search for nearby turfs, filter by sport and price, view turf details, and book slots online.  
 
 ---
 
